@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/go-acme/lego/v4/log"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
@@ -66,6 +67,10 @@ NOTES:
 				return nil
 			}
 
+			if email == "" {
+				return fmt.Errorf("email is required")
+			}
+
 			if output != "json" && output != "yaml" {
 				return fmt.Errorf("output must be 'yaml' or 'json'")
 			}
@@ -84,6 +89,8 @@ NOTES:
 					return err
 				}
 			}
+
+			log.Infof("Generate Private Key (bits: %d) completed.", bits)
 
 			if !((eabKey == "" && hmacKey == "") || (eabKey != "" && hmacKey != "")) {
 				return fmt.Errorf("both --eab and --hmac-key must present or absent")
@@ -104,6 +111,8 @@ NOTES:
 					return err
 				}
 
+				log.Infof("Create EAB Key completed.")
+
 				eabKey = eab.KeyId
 				hmacKey = eab.HmacKey
 			}
@@ -122,6 +131,8 @@ NOTES:
 			if err = acmeClient.RegisterWithEAB(eabKey, hmacKey); err != nil {
 				return err
 			}
+
+			log.Infof("Register ACME account completed.")
 
 			ret := &Result{
 				EABKey:     eabKey,
@@ -149,7 +160,7 @@ NOTES:
 	cmd.PersistentFlags().StringVar(&projectId, "project-id", "", "Google Cloud Project Id. --eab and --hmac-key are not specified, this flag will be required.")
 	cmd.PersistentFlags().StringVar(&privateKeyPath, "private-key-path", "", "Private key used for register ACME account. If not specified, this will create a new one.")
 	cmd.PersistentFlags().IntVar(&bits, "bits", 2048, "The bit size for new Private Key. This only be used when --private-key-path is not specified. Bit size must be >= 512 and <= 4096.")
-	cmd.PersistentFlags().StringVar(&email, "email", "", "Email to register ACME account. This flag is not required.")
+	cmd.PersistentFlags().StringVar(&email, "email", "", "Email to register ACME account.")
 	cmd.PersistentFlags().BoolVar(&isStaging, "staging", false, "If this flag is presented. This will register with Google CA server on Staging environment.")
 	cmd.PersistentFlags().StringVarP(&output, "output", "o", "json", "The output format. Supported 'json' and 'yaml'.")
 	cmd.PersistentFlags().BoolVarP(&showVersion, "version", "v", false, "Show version info.")
