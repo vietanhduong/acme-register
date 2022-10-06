@@ -1,6 +1,6 @@
 project_name: acme-register
 builds:
-  - main: ./cmd/main.go
+  - main: ./cmd
     binary: acme-register
     env:
       - CGO_ENABLED=0
@@ -12,9 +12,9 @@ builds:
       - darwin
     ldflags:
       - >-
-        -X github.com/vietanhduong/acme-register/cmd/main.Version={{ .Tag }}
-        -X github.com/vietanhduong/acme-register/cmd/main.GitCommit={{ .Commit }}
-        -X github.com/vietanhduong/acme-register/cmd/main.BuildDate={{ .Date }}
+        -X main.Version={{ .Tag }}
+        -X main.GitCommit={{ .Commit }}
+        -X main.BuildDate={{ .Date }}
 archives:
   - files:
       - LICENSE
