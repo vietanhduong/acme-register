@@ -1,0 +1,25 @@
+project_name: acme-register
+builds:
+  - main: ./cmd/main.go
+    binary: acme-register
+    env:
+      - CGO_ENABLED=0
+    goarch:
+      - amd64
+      - arm
+    goos:
+      - linux
+      - darwin
+    ldflags:
+      - >-
+        -X github.com/vietanhduong/acme-register/cmd.Version={{ .Tag }}
+        -X github.com/vietanhduong/acme-register/cmd.GitCommit={{ .Commit }}
+        -X github.com/vietanhduong/acme-register/cmd.BuildDate={{ .Date }}
+archives:
+  - files:
+      - LICENSE
+      - README.md
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"

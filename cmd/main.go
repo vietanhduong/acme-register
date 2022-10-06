@@ -14,10 +14,22 @@ import (
 	"github.com/vietanhduong/acme-register/pkg/util"
 )
 
+var (
+	GitCommit = "unknown"
+	BuildDate = "unknown"
+	Version   = "unreleased"
+)
+
 type Result struct {
 	EABKey     string `json:"eab_key,omitempty" yaml:"eab_key"`
 	HMACKey    string `json:"hmac_key,omitempty" yaml:"hmac_key"`
 	PrivateKey string `json:"private_key,omitempty" yaml:"private_key"`
+}
+
+func printVersion() {
+	fmt.Printf("Version:\t %s\n", Version)
+	fmt.Printf("Git commit:\t %s\n", GitCommit)
+	fmt.Printf("Date:\t\t %s\n", BuildDate)
 }
 
 func newRootCommand() *cobra.Command {
@@ -30,6 +42,7 @@ func newRootCommand() *cobra.Command {
 		output         string
 		projectId      string
 		isStaging      bool
+		showVersion    bool
 	)
 
 	var cmd = &cobra.Command{
@@ -48,6 +61,11 @@ NOTES:
 `,
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			if showVersion {
+				printVersion()
+				return nil
+			}
+
 			if output != "json" && output != "yaml" {
 				return fmt.Errorf("output must be 'yaml' or 'json'")
 			}
@@ -134,6 +152,7 @@ NOTES:
 	cmd.PersistentFlags().StringVar(&email, "email", "", "Email to register ACME account. This flag is not required.")
 	cmd.PersistentFlags().BoolVar(&isStaging, "staging", false, "If this flag is presented. This will register with Google CA server on Staging environment.")
 	cmd.PersistentFlags().StringVarP(&output, "output", "o", "json", "The output format. Supported 'json' and 'yaml'.")
+	cmd.PersistentFlags().BoolVarP(&showVersion, "version", "v", false, "Show version info.")
 	return cmd
 }
 
