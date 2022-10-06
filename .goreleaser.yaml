@@ -12,9 +12,9 @@ builds:
       - darwin
     ldflags:
       - >-
-        -X github.com/vietanhduong/acme-register/cmd.Version={{ .Tag }}
-        -X github.com/vietanhduong/acme-register/cmd.GitCommit={{ .Commit }}
-        -X github.com/vietanhduong/acme-register/cmd.BuildDate={{ .Date }}
+        -X github.com/vietanhduong/acme-register/cmd/main.Version={{ .Tag }}
+        -X github.com/vietanhduong/acme-register/cmd/main.GitCommit={{ .Commit }}
+        -X github.com/vietanhduong/acme-register/cmd/main.BuildDate={{ .Date }}
 archives:
   - files:
       - LICENSE
